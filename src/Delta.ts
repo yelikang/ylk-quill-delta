@@ -111,10 +111,14 @@ class Delta {
   }
 
   push(newOp: Op): this {
+    // 1. 获取当前序列的长度和最后一个操作
     let index = this.ops.length;
     let lastOp = this.ops[index - 1];
     newOp = cloneDeep(newOp);
+
+    // 2. 如果最后一个操作存在，尝试进行优化
     if (typeof lastOp === 'object') {
+      // 2.1 合并相邻的操作（新操作、最后操作都是删除，合并删除；删除数量相加）
       if (
         typeof newOp.delete === 'number' &&
         typeof lastOp.delete === 'number'
@@ -124,10 +128,16 @@ class Delta {
       }
       // Since it does not matter if we insert before or after deleting at the same index,
       // always prefer to insert first
+      // 在同一个索引位置进行插入和删除，操作的先后顺序不影响结果；即无论先插入还是先删除，结果都是一样的
+      // 这里的处理方式是先执行插入，再执行删除
+      // 所以这里的逻辑是：当遇到删除操作后跟插入操作时，会调整它们的顺序，确保插入操作先执行。
+
+      // 2.2 如果最后一个操作是删除，新操作是插入，则将新操作插入到序列中
       if (typeof lastOp.delete === 'number' && newOp.insert != null) {
         index -= 1;
         lastOp = this.ops[index - 1];
         if (typeof lastOp !== 'object') {
+          // 如果lastOp 不存在，则将新操作插入到序列头部（先delete、再insert）
           this.ops.unshift(newOp);
           return this;
         }
@@ -137,6 +147,7 @@ class Delta {
           typeof newOp.insert === 'string' &&
           typeof lastOp.insert === 'string'
         ) {
+          // 最后、新操作都是插入，合并插入
           this.ops[index - 1] = { insert: lastOp.insert + newOp.insert };
           if (typeof newOp.attributes === 'object') {
             this.ops[index - 1].attributes = newOp.attributes;
@@ -154,6 +165,7 @@ class Delta {
         }
       }
     }
+    // 3. 操作无法合并，根据索引位置添加新操作
     if (index === this.ops.length) {
       this.ops.push(newOp);
     } else {
@@ -335,6 +347,12 @@ class Delta {
     }
     return delta;
   }
+  /**
+   * 差异对比
+   * @param other 
+   * @param cursor 
+   * @returns 
+   */
 
   diff(other: Delta, cursor?: number | diff.CursorInfo): Delta {
     if (this.ops === other.ops) {
