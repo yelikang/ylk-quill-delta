@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "单测",
+        "program": "${workspaceFolder}/node_modules/jasmine/bin/jasmine.js",
+        "args": ["${file}"],
+        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/ts-node", // 使用 ts-node 运行
+        "sourceMaps": true,  // 启用 Source Map
+        "outFiles": ["${workspaceFolder}/dist/**/*.js"],  // 如果编译到 dist 目录
+        "console": "integratedTerminal",
+        // 指定源码目录
+        "resolveSourceMapLocations": [
+          "${workspaceFolder}/src/**/*.ts",
+          "${workspaceFolder}/test/**/*.ts"
+        ]
+      }
+    ]
+  }
