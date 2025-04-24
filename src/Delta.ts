@@ -245,6 +245,11 @@ class Delta {
     return new Delta(ops);
   }
 
+  /**
+   * 合并两个Delta对象
+   * @param other 
+   * @returns 
+   */
   compose(other: Delta): Delta {
     const thisIter = new OpIterator(this.ops);
     const otherIter = new OpIterator(other.ops);
