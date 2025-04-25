@@ -16,7 +16,7 @@ type Op = {
 
 ops = [
     {insert: 'A'},
-    // 这里的length是删除长度（从当前位置开始删除）
+    // 这里的length是删除长度（从当前位置开始删除的字符长度）
     {delete: 1},
     // 这里的length是保留长度（从当前位置开始保留）
     {retain: 2},
@@ -56,3 +56,5 @@ var ops = [
 
 ## 参考链接
 [Delta 文档结构](https://tech.kujiale.com/fu-wen-ben-bian-ji-qi-quill-js-xi-lie-yi-delta-wen-dang-jie-gou/)
+
+[Prachment](https://tech.kujiale.com/fu-wen-ben-bian-ji-qi-quill-js-xi-lie-er-parchment-wen-dang-mo-xing/)
